@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCD Guidelines & Tools</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables for Dynamic Theming */
+        :root {
+            --header-bg: #3b5360; /* Default Dark Slate */
+            --bg-color: #f5f6f8;
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --border-color: #3b9b9b; /* Teal border like the image */
+            --accent-red: #d32f2f;
+        }
+
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top App Bar */
+        .app-header {
+            background-color: var(--header-bg);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .app-header .title {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .app-header .title span {
+            color: #7de8e8; /* Light teal accent for text */
+        }
+
+        .header-icons i {
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Search Section */
+        .search-container {
+            background-color: var(--header-bg);
+            padding: 0 20px 20px 20px;
+            transition: background-color 0.3s;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .search-box i {
+            color: #3b9b9b;
+            margin-right: 10px;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: white;
+        }
+
+        /* Grid Navigation (Matches the image) */
+        .grid-nav {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .grid-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            aspect-ratio: 1 / 1;
+        }
+
+        .grid-btn:hover, .grid-btn:active {
+            background-color: #f0f8f8;
+        }
+
+        /* Specific border color for emphasis (like Emergency SOP in image) */
+        .grid-btn.red-border {
+            border-color: var(--accent-red);
+        }
+
+        .grid-btn i {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .grid-btn span {
+            font-size: 12px;
+            font-weight: 700;
+            color: #444;
+        }
+
+        /* Detail Views */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: var(--header-bg);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .data-list { list-style: none; }
+        .data-list li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        /* Tools Inputs */
+        .tool-card {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        .tool-input {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        .action-btn {
+            background: var(--header-bg);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+        }
+        
+        .modal-content h3 { margin-bottom: 15px; color: var(--header-bg); }
+        
+        .color-options {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .color-circle {
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; border: 2px solid #ddd;
+        }
+
+        .close-modal {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Bottom Footer / Updates */
+        .footer-updates {
+            background: white;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #555;
+            border-top: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+        .footer-updates i { color: #fbc02d; margin-right: 8px; font-size: 16px; }
+        
+                .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .action-btn {
+            background: var(--header-bg);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            flex: 2; /* Takes more space */
+        }
+
+        .clear-btn {
+            background: #e0e0e0;
+            color: #555;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            flex: 1; /* Takes less space */
+        }
+
+        .clear-btn:hover {
+            background: #d5d5d5;
+            color: #d32f2f;
+        }
+
+        /* Calculator Sub-Tabs */
+        .calc-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+        
+        /* Hide scrollbar for a cleaner look */
+        .calc-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        .calc-tabs::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+
+        .calc-tab-btn {
+            background: #e0eafc;
+            color: var(--header-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: 0.3s;
+        }
+
+        .calc-tab-btn.active {
+            background: var(--header-bg);
+            color: white;
+            border-color: var(--header-bg);
+        }
+
+        .calc-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-content.active {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Top App Bar -->
+    <header class="app-header">
+        <div onclick="openModal('devModal')"><i class="fas fa-bars"></i></div>
+        <div class="title">NCD <span>Guidelines</span></div>
+        <div class="header-icons">
+            <i class="fas fa-info-circle" onclick="openModal('devModal')"></i>
+            <i class="fas fa-cog" onclick="openModal('settingsModal')"></i>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <div class="search-container" id="searchContainer">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search drug, dosage, protocol..." onkeyup="searchContent()">
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- Grid Navigation (Home View) -->
+        <div id="home-view" class="view-section active">
+            <div class="grid-nav">
+                <div class="grid-btn" onclick="openView('guidelines-view')">
+                    <i class="fas fa-book-medical" style="color: #00897b;"></i>
+                    <span>Guidelines</span>
+                </div>
+                <div class="grid-btn" onclick="openView('rx-view')">
+                    <i class="fas fa-file-prescription" style="color: #1e88e5;"></i>
+                    <span>Rx Templates</span>
+                </div>
+                <div class="grid-btn red-border" onclick="openView('drugs-view')">
+                    <i class="fas fa-pills" style="color: #e53935;"></i>
+                    <span>Drug List</span>
+                </div>
+                <div class="grid-btn" onclick="openView('bp-view')">
+                    <i class="fas fa-heartbeat" style="color: #d81b60;"></i>
+                    <span>BP Tool</span>
+                </div>
+                <div class="grid-btn" onclick="openView('bmi-view')">
+                    <i class="fas fa-weight" style="color: #8e24aa;"></i>
+                    <span>BMI Calc</span>
+                </div>
+                <div class="grid-btn" onclick="openView('diet-view')">
+                    <i class="fas fa-apple-alt" style="color: #43a047;"></i>
+                    <span>Diet Guide</span>
+                </div>
+                <div class="grid-btn" onclick="openView('lab-view')">
+                    <i class="fas fa-flask" style="color: #00acc1;"></i>
+                    <span>Labs/Inv</span>
+                </div>
+                <div class="grid-btn" onclick="openView('calc-view')">
+    <i class="fas fa-calculator" style="color: #673ab7;"></i>
+    <span>Calculators</span>
+</div>
+                <div class="grid-btn" onclick="openView('followup-view')">
+                    <i class="fas fa-calendar-check" style="color: #fb8c00;"></i>
+                    <span>Follow-up</span>
+                </div>                
+            </div>
+        </div>
+
+        <!-- Detail Views -->
+                <!-- 1. Treatment Guidelines (WHO, MSF, NCD Foundation Complete Package) -->
+        <div id="guidelines-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 10px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-book-medical"></i> Global NCD Protocols
+            </h3>
+            
+            <ul class="data-list search-list">
+                
+                <!-- ========================================== -->
+                <!-- 1. WHO PEN PROTOCOLS (Essential NCD)       -->
+                <!-- ========================================== -->
+                <li style="background: #e3f2fd; border-left: none; text-align: center; font-weight: bold; color: #1565c0;">
+                    🌐 WHO PEN Guidelines (Primary Care)
+                </li>
+                
+                <li>
+                    <strong style="color: #1565c0; font-size: 15px;"><i class="fas fa-heartbeat"></i> Cardiovascular Risk Management</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>CVD Risk &lt; 10%:</strong> Lifestyle modification (diet, exercise, smoking cessation).<br>
+                    • <strong>CVD Risk 10-20%:</strong> Monitor every 3-6 months. Consider Statin if LDL remains high.<br>
+                    • <strong>CVD Risk &gt; 20%:</strong> Start BP lowering drugs + Statin (Atorvastatin 20mg) + Low-dose Aspirin (if no contraindications).
+                    </span>
+                </li>
+
+                <li>
+                    <strong style="color: #1565c0; font-size: 15px;"><i class="fas fa-stethoscope"></i> Hypertension (Stepwise Approach)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Target BP:</strong> &lt; 140/90 mmHg (Standard) / &lt; 130/80 mmHg (Diabetic/CKD).<br>
+                    • <strong>Step 1:</strong> ACEi (Enalapril) OR ARB (Losartan) OR CCB (Amlodipine).<br>
+                    • <strong>Step 2:</strong> Combine ACEi/ARB + CCB.<br>
+                    • <strong>Step 3:</strong> Add Thiazide Diuretic (HCTZ 12.5mg).<br>
+                    • <i>Note for Black patients:</i> CCB or Thiazide is preferred as first-line.
+                    </span>
+                </li>
+
+                <li>
+                    <strong style="color: #1565c0; font-size: 15px;"><i class="fas fa-tint"></i> Type 2 Diabetes Management</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Target HbA1c:</strong> &lt; 7.0% (individualized). Fasting Sugar &lt; 7.0 mmol/L.<br>
+                    • <strong>1st Line:</strong> Metformin (up to 2000mg/day). Monitor eGFR.<br>
+                    • <strong>2nd Line:</strong> Add Sulfonylurea (Gliclazide) or DPP-4 Inhibitor.<br>
+                    • <strong>If Uncontrolled (HbA1c &gt; 9%):</strong> Initiate Basal Insulin (10 Units at bedtime) and titrate slowly.
+                    </span>
+                </li>
+
+                <!-- ========================================== -->
+                <!-- 2. MSF CLINICAL GUIDELINES                 -->
+                <!-- ========================================== -->
+                <li style="background: #fff3e0; border-left: none; text-align: center; font-weight: bold; color: #ef6c00;">
+                    ⚕️ MSF Clinical Guidelines (Resource-Limited Settings)
+                </li>
+
+                <li>
+                    <strong style="color: #ef6c00; font-size: 15px;"><i class="fas fa-lungs"></i> Asthma in Adults & Children</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Mild Intermittent:</strong> SABA (Salbutamol inhaler) PRN.<br>
+                    • <strong>Mild Persistent:</strong> Low-dose ICS (Beclomethasone/Budesonide) + SABA PRN.<br>
+                    • <strong>Moderate-Severe:</strong> ICS + LABA (Formoterol) + oral Prednisolone for acute exacerbations (40-50mg/day for 5-7 days).<br>
+                    • <i>Always prescribe a spacer for children and elderly.</i>
+                    </span>
+                </li>
+
+                <li>
+                    <strong style="color: #ef6c00; font-size: 15px;"><i class="fas fa-brain"></i> Epilepsy Management</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Focal & Generalized Seizures:</strong> Sodium Valproate or Carbamazepine.<br>
+                    • <strong>Alternative/Resource-poor:</strong> Phenobarbital (cheap, effective, but sedating).<br>
+                    • <i>Do not stop AED abruptly (risk of status epilepticus).</i>
+                    </span>
+                </li>
+                
+                <li>
+                    <strong style="color: #ef6c00; font-size: 15px;"><i class="fas fa-procedures"></i> Severe Hypoglycemia (Emergency)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Conscious Patient:</strong> Oral fast-acting sugar (fruit juice, sugar water).<br>
+                    • <strong>Unconscious Patient:</strong> IV 10% or 50% Glucose / Dextrose stat. Followed by 5% Dextrose infusion if needed.
+                    </span>
+                </li>
+
+                <!-- ========================================== -->
+                <!-- 3. NCD FOUNDATION & SPECIALIST PROTOCOLS   -->
+                <!-- ========================================== -->
+                <li style="background: #e8f5e9; border-left: none; text-align: center; font-weight: bold; color: #2e7d32;">
+                    📚 NCD Foundation & Advanced Protocols
+                </li>
+
+                <li>
+                    <strong style="color: #2e7d32; font-size: 15px;"><i class="fas fa-kidneys"></i> Chronic Kidney Disease (CKD) with DM/HTN</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Microalbuminuria screening:</strong> Annually for all DM/HTN patients.<br>
+                    • <strong>Renoprotection:</strong> ACEi or ARB is mandatory if Urine ACR is high, even if BP is normal.<br>
+                    • <strong>Drug adjustment:</strong> Stop Metformin if eGFR &lt; 30 mL/min.
+                    </span>
+                </li>
+
+                <li>
+                    <strong style="color: #2e7d32; font-size: 15px;"><i class="fas fa-heart"></i> Post-Myocardial Infarction (Secondary Prevention)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    All patients post-MI should be on the <strong>"Big 4"</strong> (unless contraindicated):<br>
+                    1. Dual Antiplatelet Therapy (DAPT) - Aspirin + Clopidogrel.<br>
+                    2. High-intensity Statin (Atorvastatin 40-80mg).<br>
+                    3. Beta-Blocker (Bisoprolol/Metoprolol).<br>
+                    4. ACE Inhibitor or ARB.
+                    </span>
+                </li>
+
+                <li>
+                    <strong style="color: #2e7d32; font-size: 15px;"><i class="fas fa-lungs-virus"></i> COPD (GOLD Guidelines Summary)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Group A (Low risk, fewer symptoms):</strong> SABA or SAMA PRN.<br>
+                    • <strong>Group B (Low risk, more symptoms):</strong> LAMA (Tiotropium) or LABA daily.<br>
+                    • <strong>Group C/D (High risk/Exacerbations):</strong> LAMA + LABA or LABA + ICS.<br>
+                    • <i>Vaccinations:</i> Annual Influenza and Pneumococcal vaccine recommended.
+                    </span>
+                </li>
+
+            </ul>
+        </div>
+
+                <!-- 2. Rx Templates (Complete NCD) -->
+        <div id="rx-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 15px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-file-prescription"></i> Complete Rx Templates
+            </h3>
+            
+            <ul class="data-list search-list">
+                
+                <!-- Hypertension -->
+                <li>
+                    <strong style="color: var(--header-bg); font-size: 16px;"><i class="fas fa-heartbeat" style="color: #d81b60;"></i> 1. Hypertension (Newly Diagnosed)</strong><br>
+                    <span style="color: #555; font-size: 13px;">Rx:</span><br>
+                    - Tab. Amlodipine 5mg (1+0+0) After breakfast x 30 Days<br>
+                    <span style="color: #00897b; font-size: 12px;"><i>Or (If Diabetic/Proteinuria):</i></span><br>
+                    - Tab. Losartan 50mg (1+0+0) After breakfast x 30 Days<br>
+                    <span style="color: #d32f2f; font-size: 12px; font-weight: bold;">Advice:</span> <span style="font-size: 12px;">Low salt diet (&lt;5g/day), Daily brisk walk for 30 mins.</span>
+                </li>
+
+                <!-- Type 2 Diabetes -->
+                <li>
+                    <strong style="color: var(--header-bg); font-size: 16px;"><i class="fas fa-tint" style="color: #1e88e5;"></i> 2. Type 2 Diabetes (Initial)</strong><br>
+                    <span style="color: #555; font-size: 13px;">Rx:</span><br>
+                    - Tab. Metformin 500mg (0+0+1) After dinner x 7 Days <i>(To avoid GI upset)</i><br>
+                    - Then increase to (1+0+1) After meal x 30 Days<br>
+                    <span style="color: #d32f2f; font-size: 12px; font-weight: bold;">Advice:</span> <span style="font-size: 12px;">Avoid sugar/sweets. Diabetic diet chart follow. Check Fasting Blood Sugar (FBS) after 14 days.</span>
+                </li>
+
+                <!-- Type 2 Diabetes (Dual Therapy) -->
+                <li>
+                    <strong style="color: var(--header-bg); font-size: 16px;"><i class="fas fa-tint" style="color: #1e88e5;"></i> 3. Type 2 Diabetes (Uncontrolled on Metformin)</strong><br>
+                    <span style="color: #555; font-size: 13px;">Rx:</span><br>
+                    - Tab. Sitagliptin + Metformin (50/500mg) (1+0+1) After meal x 30 Days<br>
+                    <span style="color: #d32f2f; font-size: 12px; font-weight: bold;">Advice:</span> <span style="font-size: 12px;">Regular eye and foot care. Check HbA1c every 3 months.</span>
+                </li>
+
+                <!-- Asthma Maintenance -->
+                <li>
+                    <strong style="color: var(--header-bg); font-size: 16px;"><i class="fas fa-lungs" style="color: #00acc1;"></i> 4. Asthma (Maintenance)</strong><br>
+                    <span style="color: #555; font-size: 13px;">Rx:</span><br>
+                    - Inhaler Budesonide + Formoterol (200/6mcg)<br>
+                      Take 2 Puffs twice daily (Morning & Night) x Continue<br>
+                    - Inhaler Salbutamol (100mcg) 2 puffs SOS <i>(Only during acute attack)</i><br>
+                    <span style="color: #d32f2f; font-size: 12px; font-weight: bold;">Advice:</span> <span style="font-size: 12px;">Wash mouth after using steroid inhaler. Avoid dust and cold.</span>
+                </li>
+
+                <!-- COPD -->
+                <li>
+                    <strong style="color: var(--header-bg); font-size: 16px;"><i class="fas fa-lungs" style="color: #00acc1;"></i> 5. COPD (Stable)</strong><br>
+                    <span style="color: #555; font-size: 13px;">Rx:</span><br>
+                    - Inhaler Tiotropium (18mcg) 1 Puff once daily x Continue<br>
+                    <span style="color: #d32f2f; font-size: 12px; font-weight: bold;">Advice:</span> <span style="font-size: 12px;">Stop Smoking immediately. Breathing exercises.</span>
+                </li>
+
+                <!-- Dyslipidemia -->
+                <li>
+                    <strong style="color: var(--header-bg); font-size: 16px;"><i class="fas fa-vial" style="color: #8e24aa;"></i> 6. Dyslipidemia (High Cholesterol)</strong><br>
+                    <span style="color: #555; font-size: 13px;">Rx:</span><br>
+                    - Tab. Atorvastatin 20mg (0+0+1) After dinner / Bedtime x 3 Months<br>
+                    <span style="color: #d32f2f; font-size: 12px; font-weight: bold;">Advice:</span> <span style="font-size: 12px;">Avoid red meat, fast food, and saturated fats.</span>
+                </li>
+
+                <!-- Ischemic Heart Disease (IHD) -->
+                <li>
+                    <strong style="color: var(--header-bg); font-size: 16px;"><i class="fas fa-heart" style="color: #e53935;"></i> 7. Ischemic Heart Disease (Post-MI / Angina)</strong><br>
+                    <span style="color: #555; font-size: 13px;">Rx:</span><br>
+                    - Tab. Aspirin 75mg (0+1+0) After lunch x Continue<br>
+                    - Tab. Clopidogrel 75mg (1+0+0) After breakfast x 1 Year<br>
+                    - Tab. Bisoprolol 2.5mg (1+0+0) After breakfast x Continue<br>
+                    - Tab. Atorvastatin 40mg (0+0+1) Bedtime x Continue<br>
+                    - Spray Glyceryl Trinitrate (GTN) 1-2 puffs under tongue SOS <i>(For severe chest pain)</i>
+                </li>
+
+            </ul>
+        </div>
+
+                <!-- 3. Drug List (Complete NCD) -->
+        <div id="drugs-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 10px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-pills"></i> Complete NCD Drug List
+            </h3>
+            
+            <ul class="data-list search-list">
+                
+                <!-- ========================================== -->
+                <!-- 1. CARDIOVASCULAR & HYPERTENSION DRUGS     -->
+                <!-- ========================================== -->
+                <li style="background: #e0f2f1; border-left: none; text-align: center; font-weight: bold; color: #00695c;">
+                    🫀 Cardiovascular & Hypertension
+                </li>
+                
+                <!-- Calcium Channel Blockers (CCB) -->
+                <li><strong>Amlodipine</strong> 5mg, 10mg - CCB</li>
+                <li><strong>Nifedipine (SR/CR)</strong> 10mg, 20mg, 30mg - CCB</li>
+                <li><strong>Cilnidipine</strong> 5mg, 10mg, 20mg - CCB</li>
+                <li><strong>Diltiazem</strong> 30mg, 60mg, 90mg - CCB</li>
+                <li><strong>Verapamil</strong> 40mg, 80mg - CCB</li>
+
+                <!-- ARBs -->
+                <li><strong>Losartan Potassium</strong> 25mg, 50mg, 100mg - ARB</li>
+                <li><strong>Valsartan</strong> 40mg, 80mg, 160mg - ARB</li>
+                <li><strong>Olmesartan</strong> 10mg, 20mg, 40mg - ARB</li>
+                <li><strong>Telmisartan</strong> 20mg, 40mg, 80mg - ARB</li>
+                <li><strong>Azilsartan</strong> 40mg, 80mg - ARB</li>
+
+                <!-- ACE Inhibitors -->
+                <li><strong>Ramipril</strong> 1.25mg, 2.5mg, 5mg, 10mg - ACEi</li>
+                <li><strong>Enalapril</strong> 2.5mg, 5mg, 10mg - ACEi</li>
+                <li><strong>Lisinopril</strong> 5mg, 10mg - ACEi</li>
+                <li><strong>Captopril</strong> 12.5mg, 25mg - ACEi</li>
+
+                <!-- Beta Blockers -->
+                <li><strong>Bisoprolol</strong> 2.5mg, 5mg, 10mg - Beta Blocker</li>
+                <li><strong>Metoprolol (XR/Succinate)</strong> 25mg, 50mg - Beta Blocker</li>
+                <li><strong>Atenolol</strong> 25mg, 50mg, 100mg - Beta Blocker</li>
+                <li><strong>Carvedilol</strong> 3.125mg, 6.25mg, 12.5mg, 25mg - Alpha/Beta Blocker</li>
+                <li><strong>Nebivolol</strong> 2.5mg, 5mg - Beta Blocker</li>
+                <li><strong>Propranolol</strong> 10mg, 40mg - Non-selective Beta Blocker</li>
+
+                <!-- Diuretics -->
+                <li><strong>Hydrochlorothiazide (HCTZ)</strong> 12.5mg, 25mg - Thiazide Diuretic</li>
+                <li><strong>Indapamide (SR)</strong> 1.5mg, 2.5mg - Thiazide-like Diuretic</li>
+                <li><strong>Furosemide</strong> 20mg, 40mg - Loop Diuretic</li>
+                <li><strong>Spironolactone</strong> 25mg, 50mg - K-sparing Diuretic</li>
+                <li><strong>Torsemide</strong> 5mg, 10mg, 20mg - Loop Diuretic</li>
+
+                <!-- Antiplatelets & Anticoagulants -->
+                <li><strong>Aspirin (Enteric Coated)</strong> 75mg, 150mg - Antiplatelet</li>
+                <li><strong>Clopidogrel</strong> 75mg - Antiplatelet</li>
+                <li><strong>Ticagrelor</strong> 90mg - Antiplatelet</li>
+                <li><strong>Rivaroxaban</strong> 2.5mg, 10mg, 15mg, 20mg - NOAC</li>
+                <li><strong>Apixaban</strong> 2.5mg, 5mg - NOAC</li>
+                <li><strong>Warfarin</strong> 1mg, 2mg, 5mg - Vitamin K Antagonist</li>
+
+                <!-- Lipid-Lowering (Statins & Fibrates) -->
+                <li><strong>Atorvastatin</strong> 10mg, 20mg, 40mg, 80mg - Statin</li>
+                <li><strong>Rosuvastatin</strong> 5mg, 10mg, 20mg - Statin</li>
+                <li><strong>Simvastatin</strong> 10mg, 20mg - Statin</li>
+                <li><strong>Fenofibrate</strong> 145mg, 200mg - Fibrate</li>
+
+                <!-- Anti-Anginal -->
+                <li><strong>Nitroglycerin (GTN)</strong> 2.6mg, 6.4mg SR / Sublingual spray - Nitrate</li>
+                <li><strong>Isosorbide Mononitrate</strong> 10mg, 20mg, 40mg SR - Nitrate</li>
+                <li><strong>Trimetazidine</strong> 35mg MR - Anti-ischemic</li>
+                <li><strong>Ivabradine</strong> 5mg, 7.5mg - If channel inhibitor</li>
+
+                <!-- ========================================== -->
+                <!-- 2. ENDOCRINE & DIABETES DRUGS              -->
+                <!-- ========================================== -->
+                <li style="background: #e3f2fd; border-left: none; text-align: center; font-weight: bold; color: #1565c0;">
+                    🩸 Diabetes & Endocrinology
+                </li>
+
+                <!-- Oral Antidiabetics (OADs) -->
+                <li><strong>Metformin (XR/SR)</strong> 500mg, 850mg, 1000mg - Biguanide</li>
+                <li><strong>Gliclazide (MR)</strong> 30mg, 60mg, 80mg - Sulfonylurea</li>
+                <li><strong>Glimepiride</strong> 1mg, 2mg, 3mg, 4mg - Sulfonylurea</li>
+                <li><strong>Sitagliptin</strong> 25mg, 50mg, 100mg - DPP4 Inhibitor</li>
+                <li><strong>Vildagliptin</strong> 50mg - DPP4 Inhibitor</li>
+                <li><strong>Linagliptin</strong> 5mg - DPP4 Inhibitor</li>
+                <li><strong>Empagliflozin</strong> 10mg, 25mg - SGLT2 Inhibitor</li>
+                <li><strong>Dapagliflozin</strong> 5mg, 10mg - SGLT2 Inhibitor</li>
+                <li><strong>Pioglitazone</strong> 15mg, 30mg - Thiazolidinedione (TZD)</li>
+                <li><strong>Acarbose</strong> 25mg, 50mg - Alpha-glucosidase inhibitor</li>
+
+                <!-- Insulins & Injectables -->
+                <li><strong>Insulin Glargine (Lantus)</strong> 100 IU/ml - Long-acting Basal Insulin</li>
+                <li><strong>Insulin Detemir</strong> 100 IU/ml - Long-acting Basal Insulin</li>
+                <li><strong>Insulin Aspart/Lispro</strong> 100 IU/ml - Rapid-acting Bolus Insulin</li>
+                <li><strong>Human Mixtard (30/70)</strong> 100 IU/ml - Premixed Insulin</li>
+                <li><strong>Dulaglutide</strong> 0.75mg, 1.5mg pen - GLP-1 Agonist</li>
+                <li><strong>Semaglutide (Oral)</strong> 3mg, 7mg, 14mg - GLP-1 Agonist</li>
+
+                <!-- Thyroid -->
+                <li><strong>Levothyroxine</strong> 25mcg, 50mcg, 100mcg - Thyroid Hormone (Hypothyroidism)</li>
+                <li><strong>Carbimazole</strong> 5mg, 20mg - Antithyroid (Hyperthyroidism)</li>
+
+                <!-- ========================================== -->
+                <!-- 3. RESPIRATORY (ASTHMA & COPD)             -->
+                <!-- ========================================== -->
+                <li style="background: #f3e5f5; border-left: none; text-align: center; font-weight: bold; color: #6a1b9a;">
+                    🫁 Respiratory (Asthma & COPD)
+                </li>
+
+                <li><strong>Salbutamol</strong> 100mcg Inhaler, 2mg/4mg Tab - SABA</li>
+                <li><strong>Salmeterol + Fluticasone</strong> 50/250mcg Inhaler - LABA + ICS</li>
+                <li><strong>Formoterol + Budesonide</strong> 6/200mcg Inhaler - LABA + ICS</li>
+                <li><strong>Tiotropium Bromide</strong> 9mcg/18mcg Inhaler - LAMA</li>
+                <li><strong>Ipratropium Bromide</strong> 20mcg Inhaler - SAMA</li>
+                <li><strong>Montelukast</strong> 4mg, 5mg, 10mg - Leukotriene Receptor Antagonist</li>
+                <li><strong>Doxofylline</strong> 200mg, 400mg - Bronchodilator</li>
+                <li><strong>Theophylline (SR)</strong> 200mg, 300mg, 400mg - Xanthine derivative</li>
+
+                <!-- ========================================== -->
+                <!-- 4. NEUROLOGY & PSYCHIATRY                  -->
+                <!-- ========================================== -->
+                <li style="background: #fff3e0; border-left: none; text-align: center; font-weight: bold; color: #ef6c00;">
+                    🧠 Neurology & Psychiatry
+                </li>
+
+                <!-- Antiepileptics / Neuropathy -->
+                <li><strong>Levetiracetam</strong> 250mg, 500mg - Anticonvulsant</li>
+                <li><strong>Sodium Valproate / Valproic Acid</strong> 200mg, 500mg CR - Anticonvulsant</li>
+                <li><strong>Carbamazepine</strong> 100mg, 200mg CR - Anticonvulsant / Neuralgia</li>
+                <li><strong>Gabapentin</strong> 100mg, 300mg - Neuropathic pain</li>
+                <li><strong>Pregabalin</strong> 25mg, 50mg, 75mg - Neuropathic pain</li>
+
+                <!-- Antidepressants & Anxiolytics -->
+                <li><strong>Escitalopram</strong> 5mg, 10mg, 20mg - SSRI</li>
+                <li><strong>Sertraline</strong> 25mg, 50mg, 100mg - SSRI</li>
+                <li><strong>Fluoxetine</strong> 20mg - SSRI</li>
+                <li><strong>Duloxetine</strong> 20mg, 30mg - SNRI</li>
+                <li><strong>Amitriptyline</strong> 10mg, 25mg - TCA (Depression/Migraine)</li>
+                <li><strong>Clonazepam</strong> 0.5mg, 1mg, 2mg - Benzodiazepine</li>
+                <li><strong>Alprazolam</strong> 0.25mg, 0.5mg - Benzodiazepine</li>
+
+                <!-- Migraine & Others -->
+                <li><strong>Sumatriptan</strong> 50mg, 100mg - 5-HT1 Agonist (Migraine acute)</li>
+                <li><strong>Flunarizine</strong> 5mg, 10mg - Calcium channel blocker (Migraine prophylaxis)</li>
+                <li><strong>Donepezil</strong> 5mg, 10mg - Cholinesterase inhibitor (Alzheimer's)</li>
+                <li><strong>Levodopa + Carbidopa</strong> 250/25mg - Anti-Parkinsonian</li>
+
+                <!-- ========================================== -->
+                <!-- 5. RHEUMATOLOGY, BONE & PAIN               -->
+                <!-- ========================================== -->
+                <li style="background: #fbe9e7; border-left: none; text-align: center; font-weight: bold; color: #d84315;">
+                    🦴 Rheumatology & Pain Management
+                </li>
+
+                <li><strong>Ibuprofen</strong> 200mg, 400mg - NSAID</li>
+                <li><strong>Naproxen</strong> 250mg, 500mg - NSAID</li>
+                <li><strong>Diclofenac Sodium (SR)</strong> 50mg, 75mg, 100mg - NSAID</li>
+                <li><strong>Etoricoxib</strong> 60mg, 90mg, 120mg - COX-2 Inhibitor</li>
+                <li><strong>Methotrexate</strong> 2.5mg, 7.5mg, 10mg - DMARD (Rheumatoid Arthritis)</li>
+                <li><strong>Hydroxychloroquine</strong> 200mg - DMARD</li>
+                <li><strong>Allopurinol</strong> 100mg, 300mg - Xanthine oxidase inhibitor (Gout)</li>
+                <li><strong>Febuxostat</strong> 40mg, 80mg - Urate-lowering therapy (Gout)</li>
+                <li><strong>Colchicine</strong> 0.5mg - Acute Gout</li>
+                <li><strong>Alendronate</strong> 70mg (Weekly) - Bisphosphonate (Osteoporosis)</li>
+                <li><strong>Prednisolone</strong> 5mg, 10mg, 20mg - Corticosteroid</li>
+
+                <!-- ========================================== -->
+                <!-- 6. GASTROENTEROLOGY (Common in NCDs)       -->
+                <!-- ========================================== -->
+                <li style="background: #f1f8e9; border-left: none; text-align: center; font-weight: bold; color: #33691e;">
+                      Gastroenterology
+                </li>
+
+                <li><strong>Omeprazole</strong> 20mg, 40mg - PPI</li>
+                <li><strong>Esomeprazole</strong> 20mg, 40mg - PPI</li>
+                <li><strong>Pantoprazole</strong> 20mg, 40mg - PPI</li>
+                <li><strong>Domperidone</strong> 10mg - Prokinetic / Antiemetic</li>
+                <li><strong>Mebeverine</strong> 135mg, 200mg SR - Antispasmodic (IBS)</li>
+                <li><strong>Ursodeoxycholic Acid</strong> 150mg, 300mg - Gallstone dissolution</li>
+
+            </ul>
+        </div>
+
+                <!-- ========================================== -->
+        <!-- 4. Advanced BP Staging Tool (WHO/ISH)      -->
+        <!-- ========================================== -->
+        <div id="bp-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 10px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-heartbeat"></i> Advanced BP Staging
+            </h3>
+            <div class="tool-card">
+                <p style="font-size: 11px; color: #666; margin-bottom: 10px;">*Based on WHO/ISH Hypertension Guidelines</p>
+                
+                <input type="number" id="sysBP" placeholder="Systolic (mmHg)" class="tool-input" style="width: 48%;">
+                <input type="number" id="diaBP" placeholder="Diastolic (mmHg)" class="tool-input" style="width: 48%;">
+                
+                <select id="bpCondition" class="tool-input" style="width: 100%;">
+                    <option value="none">No Comorbidities (Standard)</option>
+                    <option value="dm_ckd">Diabetes or CKD present</option>
+                    <option value="age65">Age > 65 Years</option>
+                </select>
+
+                <div class="btn-group">
+                    <button onclick="checkBP()" class="action-btn">Analyze BP</button>
+                    <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                
+                <div id="bpResultBox" style="display: none; margin-top: 15px; padding: 12px; background: #fff; border-radius: 8px; border-left: 4px solid var(--header-bg); box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    <p id="bpResult" style="font-size: 14px; white-space: pre-line; color: #333;"></p>
+                </div>
+            </div>
+        </div>
+
+                <!-- ========================================== -->
+        <!-- 5. Smart BMI & Weight Tracker              -->
+        <!-- ========================================== -->
+        <div id="bmi-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 10px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-weight"></i> Smart BMI Tracker
+            </h3>
+            <div class="tool-card">
+                <select id="bmiRegion" class="tool-input" style="width: 100%;">
+                    <option value="asian">South Asian (WHO Modified Cut-offs)</option>
+                    <option value="standard">Global (WHO Standard Cut-offs)</option>
+                </select>
+                
+                <!-- Weight & Height with Unit Toggle -->
+                <div style="display: flex; gap: 10px; align-items: center; width: 100%; margin-top: 5px;">
+                    <input type="number" id="weight" placeholder="Weight (kg)" class="tool-input" style="flex: 1; margin: 0;">
+                    
+                    <div style="flex: 1; display: flex; gap: 5px;">
+                        <input type="number" id="height" placeholder="Height (cm)" class="tool-input" style="flex: 1; margin: 0;">
+                        <select id="heightUnit" class="tool-input" style="width: 70px; margin: 0; padding: 5px; font-size: 13px;" onchange="document.getElementById('height').placeholder = this.value === 'cm' ? 'Height (cm)' : 'Height (in)';">
+                            <option value="cm">cm</option>
+                            <option value="in">inch</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="btn-group" style="margin-top: 15px;">
+                    <button onclick="calculateBMI()" class="action-btn">Calculate BMI</button>
+                    <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                
+                <div id="bmiResultBox" style="display: none; margin-top: 15px; padding: 12px; background: #fff; border-radius: 8px; border-left: 4px solid var(--header-bg); box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    <p id="bmiResult" style="font-size: 14px; white-space: pre-line; color: #333;"></p>
+                </div>
+            </div>
+        </div>
+        
+                <div id="diet-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 10px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-apple-alt"></i> Diet & Lifestyle Guide
+            </h3>
+            <ul class="data-list search-list">
+                
+                <li style="border-left-color: #d81b60;">
+                    <strong style="color: #d81b60; font-size: 15px;"><i class="fas fa-heartbeat"></i> DASH Diet (Hypertension)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Sodium Limit:</strong> &lt; 2.3g/day (Ideal: &lt; 1.5g/day). Avoid extra table salt.<br>
+                    • <strong>Increase:</strong> Potassium-rich foods (Banana, Spinach, Potatoes) *if kidneys are normal*.<br>
+                    • <strong>Avoid:</strong> Processed foods, pickles, fast food, and canned soups.
+                    </span>
+                </li>
+
+                <li style="border-left-color: #1e88e5;">
+                    <strong style="color: #1e88e5; font-size: 15px;"><i class="fas fa-tint"></i> Diabetic Diet (Low GI)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Plate Method:</strong> 50% Non-starchy veg (greens), 25% Lean Protein (fish/chicken), 25% Complex Carbs (brown rice/whole wheat).<br>
+                    • <strong>Avoid:</strong> Refined sugar, sweets, cold drinks, white flour (maida).<br>
+                    • <strong>Fruits:</strong> 1-2 servings/day (Apple, Guava, Papaya). Avoid fruit juices.
+                    </span>
+                </li>
+
+                <li style="border-left-color: #8e24aa;">
+                    <strong style="color: #8e24aa; font-size: 15px;"><i class="fas fa-kidneys"></i> Renal Diet (CKD Patients)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Protein:</strong> Restrict to 0.6-0.8 g/kg/day (unless on dialysis).<br>
+                    • <strong>Potassium Restriction:</strong> Avoid bananas, coconut water, tomatoes, citrus fruits.<br>
+                    • <strong>Fluid Limit:</strong> As per nephrologist (usually 1 - 1.5 L/day if edema present).
+                    </span>
+                </li>
+                
+                <li style="border-left-color: #fbc02d;">
+                    <strong style="color: #f57f17; font-size: 15px;"><i class="fas fa-hamburger"></i> Lipid-Lowering Diet</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Fats:</strong> Use Olive/Mustard/Sunflower oil. Avoid Palm oil, Dalda, Ghee, Butter.<br>
+                    • <strong>Avoid:</strong> Red meat (Beef/Mutton), egg yolk (limit to 2/week), deep-fried foods.<br>
+                    • <strong>Increase:</strong> Omega-3 rich fish, oats, nuts (almonds/walnuts).
+                    </span>
+                </li>
+
+                <li style="border-left-color: #43a047;">
+                    <strong style="color: #43a047; font-size: 15px;"><i class="fas fa-running"></i> General Lifestyle</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Exercise:</strong> At least 150 mins of moderate aerobic exercise per week (e.g., 30 mins brisk walk, 5 days/week).<br>
+                    • <strong>Habits:</strong> Strict cessation of Smoking and smokeless tobacco (Jorda/Gul). Stop alcohol.
+                    </span>
+                </li>
+            </ul>
+        </div>
+        
+        <div id="lab-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 10px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-flask"></i> Lab Investigations & Normal Values
+            </h3>
+            
+            <ul class="data-list search-list">
+                <li style="background: #e3f2fd; border-left: none;">
+                    <strong style="color: #1565c0; font-size: 15px;">🩸 Glycemic Profile</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Fasting Blood Sugar (FBS):</strong> Normal &lt; 5.6 mmol/L | Diabetic &ge; 7.0 mmol/L<br>
+                    • <strong>2-Hours ABF (PPBS):</strong> Normal &lt; 7.8 mmol/L | Diabetic &ge; 11.1 mmol/L<br>
+                    • <strong>HbA1c:</strong> Normal &lt; 5.7% | Pre-DM 5.7-6.4% | DM &ge; 6.5%
+                    </span>
+                </li>
+
+                <li style="background: #fff3e0; border-left: none;">
+                    <strong style="color: #ef6c00; font-size: 15px;">🫀 Fasting Lipid Profile (FLP)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Total Cholesterol:</strong> &lt; 200 mg/dL (Desirable)<br>
+                    • <strong>Triglycerides (TG):</strong> &lt; 150 mg/dL<br>
+                    • <strong>LDL (Bad Chol):</strong> &lt; 100 mg/dL (Target &lt; 70 mg/dL for high CVD risk)<br>
+                    • <strong>HDL (Good Chol):</strong> &gt; 40 mg/dL (Male) | &gt; 50 mg/dL (Female)
+                    </span>
+                </li>
+
+                <li style="background: #f3e5f5; border-left: none;">
+                    <strong style="color: #6a1b9a; font-size: 15px;">🧪 Renal Function Test (RFT)</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Serum Creatinine:</strong> 0.6 - 1.2 mg/dL<br>
+                    • <strong>Blood Urea Nitrogen (BUN):</strong> 7 - 20 mg/dL<br>
+                    • <strong>Urine ACR (Microalbumin):</strong> Normal &lt; 30 mg/g | High 30-300 mg/g<br>
+                    • <strong>Serum Potassium (K+):</strong> 3.5 - 5.0 mEq/L
+                    </span>
+                </li>
+
+                <li style="background: #e8f5e9; border-left: none;">
+                    <strong style="color: #2e7d32; font-size: 15px;">🔬 Hepatic & Others</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>SGPT (ALT) / SGOT (AST):</strong> Generally &lt; 40 U/L<br>
+                    • <strong>Serum Uric Acid:</strong> 3.5 - 7.2 mg/dL (Gout target &lt; 6.0 mg/dL)<br>
+                    • <strong>TSH (Thyroid):</strong> 0.4 - 4.0 mIU/L
+                    </span>
+                </li>
+            </ul>
+        </div>
+
+        <div id="followup-view" class="view-section">
+            <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+            <h3 style="margin-bottom: 10px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+                <i class="fas fa-calendar-check"></i> Routine Follow-up Protocols
+            </h3>
+            
+            <ul class="data-list search-list">
+                
+                <li style="border-left-color: #1e88e5;">
+                    <strong style="color: #1e88e5; font-size: 15px;"><i class="fas fa-tint"></i> Diabetes Care Routine</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Every Visit (1-3 months):</strong> Check BP, Weight/BMI, Fasting/Random Glucose, check feet for ulcers.<br>
+                    • <strong>Every 3-6 months:</strong> Check HbA1c (if not at target or therapy changed).<br>
+                    • <strong>Annually (The Big 3):</strong><br>
+                      1. <i>Eye:</i> Dilated Retinopathy screening.<br>
+                      2. <i>Kidney:</i> UACR & Serum Creatinine (eGFR).<br>
+                      3. <i>Nerves:</i> Comprehensive Foot Exam (Monofilament test).
+                    </span>
+                </li>
+
+                <li style="border-left-color: #d81b60;">
+                    <strong style="color: #d81b60; font-size: 15px;"><i class="fas fa-heartbeat"></i> Hypertension Follow-up</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>Newly Diagnosed / Dose Changed:</strong> Review every 2-4 weeks until target BP is achieved.<br>
+                    • <strong>Stable Patients:</strong> Review every 3-6 months.<br>
+                    • <strong>Annual Labs:</strong> Lipid Profile, Serum Creatinine, Electrolytes (Na+, K+), ECG, Urine Routine.
+                    </span>
+                </li>
+
+                <li style="border-left-color: #00acc1;">
+                    <strong style="color: #00acc1; font-size: 15px;"><i class="fas fa-lungs"></i> Asthma & COPD Protocol</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>1-3 Months:</strong> Assess symptom control (night awakenings, rescue inhaler use).<br>
+                    • <strong>Every Visit:</strong> Check inhaler technique and adherence.<br>
+                    • <strong>Annually:</strong> Spirometry check, Influenza vaccine (yearly), Pneumococcal vaccine (as per age/guideline).
+                    </span>
+                </li>
+
+                <li style="border-left-color: #e53935;">
+                    <strong style="color: #e53935; font-size: 15px;"><i class="fas fa-heart"></i> IHD / Post-MI Follow-up</strong><br>
+                    <span style="font-size: 13px; color: #444;">
+                    • <strong>1-3 Months:</strong> Review symptoms of angina/heart failure, ensure adherence to dual antiplatelets and statins.<br>
+                    • <strong>Annually:</strong> Fasting Lipid Profile (Ensure LDL is at strict target), ECG, Echocardiogram (if HF symptoms present).
+                    </span>
+                </li>
+
+            </ul>
+        </div>
+        
+        <!-- Smart Clinical Calculators View with Tabs -->
+<div id="calc-view" class="view-section">
+    <button class="back-btn" onclick="goHome()"><i class="fas fa-arrow-left"></i> Back</button>
+    <h3 style="margin-bottom: 15px; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">
+        <i class="fas fa-calculator"></i> Clinical Calculators
+    </h3>
+
+    <!-- Sub Tabs Navigation -->
+    <div class="calc-tabs">
+        <button class="calc-tab-btn active" onclick="openCalcTab('calc-cardio', this)">🫀 Cardio</button>
+        <button class="calc-tab-btn" onclick="openCalcTab('calc-endo', this)">🩸 Endo & DM</button>
+        <button class="calc-tab-btn" onclick="openCalcTab('calc-renal', this)">🧪 Kidney & Liver</button>
+        <button class="calc-tab-btn" onclick="openCalcTab('calc-diet', this)">🥗 Nutrition</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. Cardio Tab -->
+    <!-- ========================================== -->
+    <div id="calc-cardio" class="calc-content active">
+        <!-- CVD Risk Estimator -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-heartbeat"></i> 10-Year CVD Risk Estimator</h4>
+            <p style="font-size: 11px; color: #666; margin-bottom: 10px;">*Simplified clinical proxy based on risk factors.</p>
+            <input type="number" id="cvdAge" placeholder="Age (Years)" class="tool-input">
+            <input type="number" id="cvdSysBP" placeholder="Systolic BP (mmHg)" class="tool-input">
+            <input type="number" id="cvdChol" placeholder="Total Cholesterol (mg/dL)" class="tool-input">
+            <select id="cvdSmoker" class="tool-input">
+                <option value="0">Non-Smoker</option>
+                <option value="1">Smoker</option>
+            </select>
+            <select id="cvdDiabetic" class="tool-input">
+                <option value="0">Non-Diabetic</option>
+                <option value="1">Diabetic</option>
+            </select>
+            <div class="btn-group">
+                <button onclick="calculateCVDRisk()" class="action-btn">Estimate Risk</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="cvdResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f;"></p>
+        </div>
+
+        <!-- Non-Laboratory WHO CVD Risk -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-globe-asia"></i> Non-Lab CVD Risk</h4>
+            <select id="nlGender" class="tool-input">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+            <input type="number" id="nlAge" placeholder="Age (Years)" class="tool-input">
+            <input type="number" id="nlSysBP" placeholder="Systolic BP (mmHg)" class="tool-input">
+            <input type="number" id="nlBmi" placeholder="BMI (kg/m²)" class="tool-input">
+            <select id="nlSmoker" class="tool-input">
+                <option value="0">Non-Smoker</option>
+                <option value="1">Smoker</option>
+            </select>
+            <div class="btn-group">
+                <button onclick="calculateNonLabCVD()" class="action-btn">Estimate Risk</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="nlResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+
+        <!-- MAP & CHA2DS2-VASc -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-heartbeat"></i> MAP & CHA2DS2-VASc Score</h4>
+            <p style="font-size: 13px; font-weight: bold; margin-top: 5px;">Mean Arterial Pressure (MAP):</p>
+            <input type="number" id="mapSys" placeholder="Systolic BP" class="tool-input" style="width: 48%;">
+            <input type="number" id="mapDia" placeholder="Diastolic BP" class="tool-input" style="width: 48%;">
+            <div class="btn-group">
+                <button onclick="calculateMAP()" class="action-btn">Calculate MAP</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="mapResult" style="margin-top: 5px; font-weight: bold; color: #d32f2f;"></p>
+            <hr style="border: 0.5px solid #ccc; margin: 15px 0;">
+            <p style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">CHA2DS2-VASc (AFib Stroke Risk):</p>
+            <div style="font-size: 14px; margin-bottom: 10px;">
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaAge75"> Age ≥ 75 years (+2)</label>
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaAge65"> Age 65-74 years (+1)</label>
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaFemale"> Female Gender (+1)</label>
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaCHF"> Heart Failure (+1)</label>
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaHTN"> Hypertension (+1)</label>
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaStroke"> Stroke/TIA (+2)</label>
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaVasc"> Vascular Disease (+1)</label>
+                <label style="display: block; margin-bottom: 5px;"><input type="checkbox" id="chaDM"> Diabetes Mellitus (+1)</label>
+            </div>
+            <div class="btn-group">
+                <button onclick="calculateCHAD()" class="action-btn">Calculate Score</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="chadResult" style="margin-top: 5px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. Endocrinology & Diabetes Tab -->
+    <!-- ========================================== -->
+    <div id="calc-endo" class="calc-content">
+        <!-- HbA1c to eAG Converter -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-tint"></i> HbA1c to eAG Converter</h4>
+            <input type="number" id="hba1cInput" placeholder="Enter HbA1c (%)" class="tool-input" step="0.1">
+            <div class="btn-group">
+                <button onclick="calculateEAG()" class="action-btn">Convert to eAG</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="eagResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f;"></p>
+        </div>
+
+        <!-- OGTT & GDM Analyzer -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-baby"></i> OGTT & GDM Analyzer</h4>
+            <input type="number" id="gdmFasting" placeholder="Fasting Glucose (mg/dL)" class="tool-input">
+            <input type="number" id="gdm1Hr" placeholder="1-Hour Post Glucose" class="tool-input">
+            <input type="number" id="gdm2Hr" placeholder="2-Hour Post Glucose" class="tool-input">
+            <div class="btn-group">
+                <button onclick="calculateGDM()" class="action-btn">Analyze GDM</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="gdmResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+
+        <!-- Corrected Sodium -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-flask"></i> Corrected Sodium (Hyperglycemia)</h4>
+            <input type="number" id="measNa" placeholder="Measured Sodium (mEq/L)" class="tool-input">
+            <input type="number" id="measGlu" placeholder="Blood Glucose (mg/dL)" class="tool-input">
+            <div class="btn-group">
+                <button onclick="calculateSodium()" class="action-btn">Correct Na+</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="naResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f;"></p>
+        </div>
+
+        <!-- Anion Gap Calculator -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-ambulance"></i> Anion Gap (DKA Emergency)</h4>
+            <input type="number" id="agNa" placeholder="Sodium (Na+)" class="tool-input">
+            <input type="number" id="agCl" placeholder="Chloride (Cl-)" class="tool-input" style="width: 48%;">
+            <input type="number" id="agHco3" placeholder="Bicarbonate (HCO3-)" class="tool-input" style="width: 48%;">
+            <div class="btn-group">
+                <button onclick="calculateAnionGap()" class="action-btn">Calculate Gap</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="agResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. Renal & Hepatology Tab -->
+    <!-- ========================================== -->
+    <div id="calc-renal" class="calc-content">
+        <!-- eGFR Calculator -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-kidneys"></i> eGFR Calculator (MDRD)</h4>
+            <input type="number" id="egfrAge" placeholder="Age (Years)" class="tool-input">
+            <select id="egfrGender" class="tool-input">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+            <input type="number" id="egfrScr" placeholder="Serum Creatinine (mg/dL)" class="tool-input">
+            <div class="btn-group">
+                <button onclick="calculateEGFR()" class="action-btn">Calculate eGFR</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="egfrResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+
+        <!-- CrCl Dosing Tool -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-pills"></i> CrCl Dosing (Cockcroft-Gault)</h4>
+            <select id="crclGender" class="tool-input">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+            <input type="number" id="crclAge" placeholder="Age (Years)" class="tool-input" style="width: 48%;">
+            <input type="number" id="crclWeight" placeholder="Weight (kg)" class="tool-input" style="width: 48%;">
+            <input type="number" id="crclScr" placeholder="Serum Creatinine (mg/dL)" class="tool-input">
+            <div class="btn-group">
+                <button onclick="calculateCrCl()" class="action-btn">Calculate CrCl</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="crclResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+
+        <!-- UACR Stager -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-vial"></i> UACR (Microalbuminuria)</h4>
+            <input type="number" id="uacrAlbumin" placeholder="Urine Albumin (mg/dL)" class="tool-input">
+            <input type="number" id="uacrCreatinine" placeholder="Urine Creatinine (mg/dL)" class="tool-input">
+            <div class="btn-group">
+                <button onclick="calculateUACR()" class="action-btn">Calculate Ratio</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="uacrResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+
+        <!-- FIB-4 Index -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-procedures"></i> FIB-4 Index (Liver Fibrosis)</h4>
+            <input type="number" id="fibAge" placeholder="Age (Years)" class="tool-input">
+            <input type="number" id="fibAST" placeholder="AST (U/L)" class="tool-input" style="width: 48%;">
+            <input type="number" id="fibALT" placeholder="ALT (U/L)" class="tool-input" style="width: 48%;">
+            <input type="number" id="fibPlt" placeholder="Platelets (10^9/L)" class="tool-input">
+            <div class="btn-group">
+                <button onclick="calculateFIB4()" class="action-btn">Calculate FIB-4</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="fibResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. Nutrition & Diet Tab -->
+    <!-- ========================================== -->
+    <div id="calc-diet" class="calc-content">
+        <!-- IBW & Target Calories -->
+        <div class="tool-card">
+            <h4 style="color: #1e3c72; margin-bottom: 10px;"><i class="fas fa-weight"></i> IBW & Target Calories</h4>
+            <select id="ibwGender" class="tool-input">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+            <input type="number" id="ibwHeight" placeholder="Height in cm (e.g. 170)" class="tool-input">
+            <div class="btn-group">
+                <button onclick="calculateIBW()" class="action-btn">Calculate Target</button>
+                <button onclick="clearCalc(this)" class="clear-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p id="ibwResult" style="margin-top: 10px; font-weight: bold; color: #d32f2f; white-space: pre-line;"></p>
+        </div>
+    </div>
+
+</div>
+
+
+    </main>
+
+    <!-- Footer Updates (Matches image bottom) -->
+    <div class="footer-updates">
+        <i class="fas fa-bell"></i> Updates: Database v2.1 loaded.
+    </div>
+
+    <!-- Modals -->
+    <!-- Settings / Color Theme Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-palette"></i> App Settings</h3>
+            <p style="margin-bottom: 15px; font-size: 14px; color: #666;">Choose App Theme Color</p>
+            
+            <div class="color-options">
+                <!-- Color 1: Default Slate -->
+                <div class="color-circle" style="background: #3b5360;" onclick="changeTheme('#3b5360', '#3b9b9b')"></div>
+                <!-- Color 2: Deep Blue -->
+                <div class="color-circle" style="background: #1e3c72;" onclick="changeTheme('#1e3c72', '#2a5298')"></div>
+                <!-- Color 3: Maroon/Red -->
+                <div class="color-circle" style="background: #8e0000;" onclick="changeTheme('#8e0000', '#c62828')"></div>
+                <!-- Color 4: Dark Green -->
+                <div class="color-circle" style="background: #1b5e20;" onclick="changeTheme('#1b5e20', '#4caf50')"></div>
+            </div>
+
+            <button class="close-modal" onclick="closeModal('settingsModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Developer Info Modal -->
+        <div class="modal-overlay" id="devModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-code"></i> Developer Info</h3>
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Kabbo" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; margin: 10px auto; background: #f0f0f0;">
+            <h4 style="margin-bottom: 5px;">Kabbo</h4>
+            <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Lead Developer & UX Designer<br>NCD Case Management System</p>
+            <button class="close-modal" onclick="closeModal('devModal')">Awesome!</button>
+        </div>
+    </div> <div class="modal-overlay" id="exitModal">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-red); margin-bottom: 10px;">
+                <i class="fas fa-sign-out-alt"></i> Exit App?
+            </h3>
+            <p style="margin-bottom: 20px; font-size: 14px; color: #555;">
+                Are you sure you want to close the NCD Guidelines app?
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <button class="action-btn" style="background: #e0e0e0; color: #333;" onclick="closeModal('exitModal')">No, Stay</button>
+                <button class="action-btn" style="background: var(--accent-red);" onclick="confirmExit()">Yes, Exit</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>        
+
+        // Global Search (Works when in home view looking for specific content in lists)
+        function searchContent() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            // In a real app, this would filter grid items or open a search result view. 
+            // For now, if user types something, we can alert or filter a combined hidden list.
+            let gridItems = document.querySelectorAll('.grid-btn');
+            
+            gridItems.forEach(item => {
+                let text = item.innerText.toLowerCase();
+                if (text.includes(input)) {
+                    item.style.display = "flex";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        }
+
+        // Theme / Multiple Color Logic
+        function changeTheme(headerBg, borderColor) {
+            document.documentElement.style.setProperty('--header-bg', headerBg);
+            document.documentElement.style.setProperty('--border-color', borderColor);
+            // Change top header and back buttons colors dynamically
+            closeModal('settingsModal');
+        }
+
+        // Modal Logic
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // ==========================================
+// Advanced BP Staging Logic (WHO/ISH)
+// ==========================================
+function checkBP() {
+    let sys = parseInt(document.getElementById('sysBP').value);
+    let dia = parseInt(document.getElementById('diaBP').value);
+    let condition = document.getElementById('bpCondition').value;
+    let resultBox = document.getElementById('bpResultBox');
+    let resultText = document.getElementById('bpResult');
+
+    if(!sys || !dia) {
+        resultBox.style.display = 'block';
+        resultBox.style.borderLeftColor = "#d32f2f";
+        resultText.innerText = "⚠️ Please enter both Systolic and Diastolic values.";
+        return;
+    }
+
+    let stage = "";
+    let color = "";
+    let action = "";
+
+    // WHO/ISH BP Classification
+    if (sys < 120 && dia < 80) {
+        stage = "Optimal BP"; color = "#4caf50";
+        action = "Maintain healthy lifestyle.";
+    } 
+    else if ((sys >= 120 && sys <= 129) && (dia >= 80 && dia <= 84)) {
+        stage = "Normal BP"; color = "#8bc34a";
+        action = "Recheck in 1 year.";
+    } 
+    else if ((sys >= 130 && sys <= 139) || (dia >= 85 && dia <= 89)) {
+        stage = "High-Normal BP"; color = "#ffb300";
+        action = "Lifestyle modification. Recheck in 3-6 months.";
+    } 
+    else if ((sys >= 140 && sys <= 159) || (dia >= 90 && dia <= 99)) {
+        stage = "Grade 1 Hypertension"; color = "#fb8c00";
+        action = "Start medication if high CVD risk or no improvement with lifestyle.";
+    } 
+    else if ((sys >= 160 && sys <= 179) || (dia >= 100 && dia <= 109)) {
+        stage = "Grade 2 Hypertension"; color = "#e53935";
+        action = "Start pharmacological treatment immediately.";
+    } 
+    else if (sys >= 180 || dia >= 110) {
+        stage = "Grade 3 Hypertension"; color = "#b71c1c";
+        action = "URGENT! Immediate treatment & close monitoring required.";
+    } 
+    else if (sys >= 140 && dia < 90) {
+        stage = "Isolated Systolic Hypertension (ISH)"; color = "#f4511e";
+        action = "Treat based on Systolic value protocols.";
+    }
+
+    // Determine Target BP based on Comorbidities
+    let targetBP = "< 140/90 mmHg";
+    if (condition === "dm_ckd") targetBP = "< 130/80 mmHg (Strict control for Renal/DM)";
+    else if (condition === "age65") targetBP = "< 140/90 mmHg (Avoid lowering < 130 SBP to prevent falls)";
+
+    resultBox.style.display = 'block';
+    resultBox.style.borderLeftColor = color;
+    resultText.innerHTML = `<strong style="color:${color}; font-size:16px;">${stage}</strong><br><br>
+                            <strong>🎯 Target BP:</strong> ${targetBP}<br>
+                            <strong>📋 Action:</strong> ${action}`;
+}
+
+// ==========================================
+// Smart BMI & Weight Tracker (WHO & Asian)
+// ==========================================
+function calculateBMI() {
+    let weight = parseFloat(document.getElementById('weight').value);
+    let heightVal = parseFloat(document.getElementById('height').value);
+    let hUnit = document.getElementById('heightUnit').value;
+    let region = document.getElementById('bmiRegion').value;
+    let resultBox = document.getElementById('bmiResultBox');
+    let resultText = document.getElementById('bmiResult');
+
+    if(!weight || !heightVal) {
+        resultBox.style.display = 'block';
+        resultBox.style.borderLeftColor = "#d32f2f";
+        resultText.innerText = "⚠️ Please enter both Weight and Height.";
+        return;
+    }
+
+    // Convert Inch to cm if 'inch' is selected (1 inch = 2.54 cm)
+    let heightCm = hUnit === 'in' ? (heightVal * 2.54) : heightVal;
+    
+    // Convert cm to meters for BMI formula
+    let heightM = heightCm / 100;
+    let bmi = (weight / (heightM * heightM)).toFixed(1);
+
+    let category = "";
+    let color = "";
+    let upperHealthyBmi = region === 'asian' ? 22.9 : 24.9;
+    let overweightBmi = region === 'asian' ? 23 : 25;
+    let obeseBmi = region === 'asian' ? 27.5 : 30;
+
+    // Categorization logic
+    if (bmi < 18.5) {
+        category = "Underweight"; color = "#039be5";
+    } else if (bmi >= 18.5 && bmi <= upperHealthyBmi) {
+        category = "Healthy Weight"; color = "#4caf50";
+    } else if (bmi >= overweightBmi && bmi < obeseBmi) {
+        category = "Overweight"; color = "#fb8c00";
+    } else {
+        category = "Obese"; color = "#e53935";
+    }
+
+    // Calculate Ideal Weight Range based on calculated Height
+    let minIdealWeight = (18.5 * (heightM * heightM)).toFixed(1);
+    let maxIdealWeight = (upperHealthyBmi * (heightM * heightM)).toFixed(1);
+
+    // Calculate difference to reach target
+    let advice = "";
+    if (weight > maxIdealWeight) {
+        let loseAmount = (weight - maxIdealWeight).toFixed(1);
+        advice = `📉 Needs to lose at least <strong>${loseAmount} kg</strong> to reach healthy range.`;
+    } else if (weight < minIdealWeight) {
+        let gainAmount = (minIdealWeight - weight).toFixed(1);
+        advice = `📈 Needs to gain at least <strong>${gainAmount} kg</strong> to reach healthy range.`;
+    } else {
+        advice = `✨ Weight is perfect! Keep it up.`;
+    }
+
+    resultBox.style.display = 'block';
+    resultBox.style.borderLeftColor = color;
+    resultText.innerHTML = `<strong style="color:${color}; font-size:16px;">BMI: ${bmi} (${category})</strong><br><br>
+                            <strong>⚖️ Ideal Weight Range:</strong> ${minIdealWeight} kg - ${maxIdealWeight} kg<br>
+                            ${advice}`;
+}
+
+        
+        // ==========================================
+// 1. eGFR Calculator (MDRD Formula)
+// ==========================================
+function calculateEGFR() {
+    let age = document.getElementById('egfrAge').value;
+    let scr = document.getElementById('egfrScr').value;
+    let gender = document.getElementById('egfrGender').value;
+    let result = document.getElementById('egfrResult');
+
+    if(!age || !scr) return result.innerText = "Please enter both Age and Creatinine.";
+
+    // MDRD Formula Calculation
+    let egfr = 175 * Math.pow(scr, -1.154) * Math.pow(age, -0.203);
+    if (gender === 'F') egfr = egfr * 0.742;
+    
+    egfr = Math.round(egfr);
+
+    // Determining CKD Stage
+    let stage = "";
+    if (egfr >= 90) stage = "Stage 1 (Normal/High)";
+    else if (egfr >= 60) stage = "Stage 2 (Mildly Decreased)";
+    else if (egfr >= 45) stage = "Stage 3a (Mild to Moderate)";
+    else if (egfr >= 30) stage = "Stage 3b (Moderate to Severe)";
+    else if (egfr >= 15) stage = "Stage 4 (Severely Decreased)";
+    else stage = "Stage 5 (Kidney Failure)";
+
+    result.innerText = `eGFR: ${egfr} mL/min/1.73m²\nStatus: ${stage}`;
+}
+
+// ==========================================
+// 2. HbA1c to eAG Converter
+// ==========================================
+function calculateEAG() {
+    let a1c = document.getElementById('hba1cInput').value;
+    let result = document.getElementById('eagResult');
+
+    if(!a1c) return result.innerText = "Please enter HbA1c %.";
+
+    // Formula: eAG = (28.7 * HbA1c) - 46.7
+    let eag_mgdl = Math.round((28.7 * a1c) - 46.7);
+    let eag_mmol = (eag_mgdl / 18.015).toFixed(1); // Convert mg/dL to mmol/L
+
+    result.innerText = `Estimated Average Glucose:\n${eag_mgdl} mg/dL  (or  ${eag_mmol} mmol/L)`;
+}
+
+// ==========================================
+// 3. CVD Risk Estimator (Simplified Clinical Model)
+// ==========================================
+function calculateCVDRisk() {
+    let age = parseInt(document.getElementById('cvdAge').value);
+    let sysBP = parseInt(document.getElementById('cvdSysBP').value);
+    let chol = parseInt(document.getElementById('cvdChol').value);
+    let smoker = parseInt(document.getElementById('cvdSmoker').value);
+    let diabetic = parseInt(document.getElementById('cvdDiabetic').value);
+    let result = document.getElementById('cvdResult');
+
+    if(!age || !sysBP || !chol) return result.innerText = "Please fill out all numerical fields.";
+
+    // Base Risk 
+    let riskScore = 2; // Starting baseline
+
+    // Age Factor
+    if (age >= 40 && age <= 49) riskScore += 3;
+    else if (age >= 50 && age <= 59) riskScore += 6;
+    else if (age >= 60 && age <= 69) riskScore += 9;
+    else if (age >= 70) riskScore += 12;
+
+    // BP Factor
+    if (sysBP >= 130 && sysBP <= 139) riskScore += 2;
+    else if (sysBP >= 140 && sysBP <= 159) riskScore += 4;
+    else if (sysBP >= 160) riskScore += 6;
+
+    // Cholesterol Factor
+    if (chol >= 200 && chol <= 239) riskScore += 2;
+    else if (chol >= 240) riskScore += 4;
+
+    // Smoker Factor
+    if (smoker === 1) riskScore += 5;
+
+    // Diabetes Factor
+    if (diabetic === 1) riskScore += 6;
+
+    // Converting Score to Percentage (Approximation curve)
+    let riskPercent = 0;
+    if (riskScore <= 5) riskPercent = 1;
+    else if (riskScore <= 10) riskPercent = riskScore * 0.8;
+    else if (riskScore <= 15) riskPercent = riskScore * 1.2;
+    else if (riskScore <= 20) riskPercent = riskScore * 1.5;
+    else riskPercent = riskScore * 2;
+
+    // Cap at >30%
+    if (riskPercent > 30) riskPercent = ">30";
+    else riskPercent = Math.round(riskPercent);
+
+    // Risk Categorization
+    let riskLevel = "";
+    if (riskPercent < 7.5) riskLevel = "Low Risk 🟢";
+    else if (riskPercent >= 7.5 && riskPercent <= 19.9) riskLevel = "Intermediate Risk 🟡";
+    else riskLevel = "High Risk 🔴";
+
+    result.innerText = `10-Year CVD Risk: ${riskPercent}%\nCategory: ${riskLevel}`;
+}
+
+// ==========================================
+// 4. MAP Calculator
+// ==========================================
+function calculateMAP() {
+    let sys = parseFloat(document.getElementById('mapSys').value);
+    let dia = parseFloat(document.getElementById('mapDia').value);
+    let result = document.getElementById('mapResult');
+
+    if(!sys || !dia) return result.innerText = "Enter SBP and DBP.";
+
+    // MAP = [SBP + 2(DBP)] / 3
+    let map = Math.round((sys + (2 * dia)) / 3);
+    result.innerText = `MAP: ${map} mmHg (Normal: 70-100)`;
+}
+
+// ==========================================
+// 5. CHA2DS2-VASc Score Calculator
+// ==========================================
+function calculateCHAD() {
+    let score = 0;
+    if(document.getElementById('chaAge75').checked) score += 2;
+    else if(document.getElementById('chaAge65').checked) score += 1; // Only count one age bracket
+    
+    if(document.getElementById('chaFemale').checked) score += 1;
+    if(document.getElementById('chaCHF').checked) score += 1;
+    if(document.getElementById('chaHTN').checked) score += 1;
+    if(document.getElementById('chaStroke').checked) score += 2;
+    if(document.getElementById('chaVasc').checked) score += 1;
+    if(document.getElementById('chaDM').checked) score += 1;
+
+    let rec = "";
+    if (score === 0) rec = "Low Risk - No anticoagulation needed.";
+    else if (score === 1 && !document.getElementById('chaFemale').checked) rec = "Moderate Risk - Consider OAC/NOAC.";
+    else rec = "High Risk - Oral Anticoagulant (OAC) recommended.";
+
+    document.getElementById('chadResult').innerText = `Total Score: ${score}\nRecommendation: ${rec}`;
+}
+
+// ==========================================
+// 6. Corrected Sodium (Hyperglycemia)
+// ==========================================
+function calculateSodium() {
+    let na = parseFloat(document.getElementById('measNa').value);
+    let glu = parseFloat(document.getElementById('measGlu').value);
+    let result = document.getElementById('naResult');
+
+    if(!na || !glu) return result.innerText = "Enter Na and Glucose levels.";
+
+    // Formula: Corrected Na = Measured Na + 0.016 * (Glucose - 100)
+    let correctedNa = na + 0.016 * (glu - 100);
+    result.innerText = `Corrected Sodium: ${correctedNa.toFixed(1)} mEq/L`;
+}
+
+// ==========================================
+// 7. FIB-4 Index Calculator
+// ==========================================
+function calculateFIB4() {
+    let age = parseFloat(document.getElementById('fibAge').value);
+    let ast = parseFloat(document.getElementById('fibAST').value);
+    let alt = parseFloat(document.getElementById('fibALT').value);
+    let plt = parseFloat(document.getElementById('fibPlt').value);
+    let result = document.getElementById('fibResult');
+
+    if(!age || !ast || !alt || !plt) return result.innerText = "Please fill all fields.";
+
+    // Formula: (Age * AST) / (Platelets * sqrt(ALT))
+    let fib4 = (age * ast) / (plt * Math.sqrt(alt));
+    
+    let risk = "";
+    if (fib4 < 1.45) risk = "Low risk of advanced fibrosis.";
+    else if (fib4 > 3.25) risk = "High risk of advanced fibrosis (Cirrhosis likely).";
+    else risk = "Indeterminate risk. Further testing needed.";
+
+    result.innerText = `FIB-4 Score: ${fib4.toFixed(2)}\nInterpretation: ${risk}`;
+}
+
+// ==========================================
+// 8. Ideal Body Weight (IBW) & Target Calories
+// ==========================================
+function calculateIBW() {
+    let gender = document.getElementById('ibwGender').value;
+    let heightCm = parseFloat(document.getElementById('ibwHeight').value);
+    let result = document.getElementById('ibwResult');
+
+    if(!heightCm) return result.innerText = "Enter height in cm.";
+
+    // Convert cm to inches
+    let heightIn = heightCm / 2.54;
+    let ibw = 0;
+
+    // Devine Formula
+    if(heightIn > 60) {
+        if (gender === 'M') ibw = 50 + 2.3 * (heightIn - 60);
+        else ibw = 45.5 + 2.3 * (heightIn - 60);
+    } else {
+        // Fallback for short heights
+        if (gender === 'M') ibw = 50;
+        else ibw = 45.5;
+    }
+
+    let maintenanceCal = Math.round(ibw * 30);
+    let weightLossCal = Math.round(ibw * 25);
+
+    result.innerText = `Ideal Body Weight: ${ibw.toFixed(1)} kg\nMaintenance: ~${maintenanceCal} kcal/day\nWeight Loss Target: ~${weightLossCal} kcal/day`;
+}
+
+// ==========================================
+// Universal Clear / Reset Logic
+// ==========================================
+function clearCalc(btnElement) {
+    // ১. যে বাটনে ক্লিক করা হয়েছে, তার প্যারেন্ট (tool-card) খুঁজে বের করা
+    let card = btnElement.closest('.tool-card');
+    
+    // ২. কার্ডের ভেতরের সব ইনপুট ফিল্ড ফাঁকা করা
+    let inputs = card.querySelectorAll('input[type="number"], input[type="text"]');
+    inputs.forEach(input => input.value = '');
+    
+    // ৩. কার্ডের ভেতরের সব চেকবক্স আনচেক করা (যেমন CHA2DS2-VASc এর জন্য)
+    let checkboxes = card.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(chk => chk.checked = false);
+    
+    // ৪. সিলেক্ট/ড্রপডাউন বক্সগুলোর ডিফল্ট ভ্যালু (১ম অপশন) সেট করা
+    let selects = card.querySelectorAll('select');
+    selects.forEach(sel => sel.selectedIndex = 0);
+    
+    // ৫. রেজাল্ট টেক্সট রিমুভ করা (যেহেতু সবগুলো রেজাল্ট 'Result' আইডি দিয়ে শেষ হয়েছে)
+    let results = card.querySelectorAll('p[id$="Result"]');
+    results.forEach(res => res.innerText = '');
+}
+
+// ==========================================
+// 8. OGTT & GDM Analyzer
+// ==========================================
+function calculateGDM() {
+    let fbs = parseFloat(document.getElementById('gdmFasting').value);
+    let hr1 = parseFloat(document.getElementById('gdm1Hr').value) || 0;
+    let hr2 = parseFloat(document.getElementById('gdm2Hr').value) || 0;
+    let result = document.getElementById('gdmResult');
+
+    if(!fbs) return result.innerText = "Please enter at least Fasting Glucose.";
+
+    let isGDM = false;
+    let flags = [];
+
+    if(fbs >= 92) { isGDM = true; flags.push("Fasting (≥92)"); }
+    if(hr1 >= 180) { isGDM = true; flags.push("1-Hour (≥180)"); }
+    if(hr2 >= 153) { isGDM = true; flags.push("2-Hour (≥153)"); }
+
+    if(isGDM) {
+        result.innerText = `Diagnosis: GESTATIONAL DIABETES (GDM) 🔴\nCriteria met: ${flags.join(', ')}\nAction: Start MNT (Diet) and monitor. Insulin may be required.`;
+    } else {
+        result.innerText = "Diagnosis: Normal Tolerance 🟢\nKeep routine monitoring.";
+    }
+}
+
+// ==========================================
+// 9. Creatinine Clearance (Cockcroft-Gault)
+// ==========================================
+function calculateCrCl() {
+    let gender = document.getElementById('crclGender').value;
+    let age = parseFloat(document.getElementById('crclAge').value);
+    let weight = parseFloat(document.getElementById('crclWeight').value);
+    let scr = parseFloat(document.getElementById('crclScr').value);
+    let result = document.getElementById('crclResult');
+
+    if(!age || !weight || !scr) return result.innerText = "Please fill all fields.";
+
+    let crcl = ((140 - age) * weight) / (72 * scr);
+    if(gender === 'F') crcl = crcl * 0.85;
+
+    let doseAdjust = "";
+    if(crcl >= 90) doseAdjust = "Normal dosing.";
+    else if(crcl >= 60) doseAdjust = "Mild impairment. Standard dosing mostly safe.";
+    else if(crcl >= 30) doseAdjust = "Moderate impairment. Dose adjustment required for renally cleared drugs.";
+    else doseAdjust = "Severe impairment! Strictly adjust doses (e.g., avoid Metformin).";
+
+    result.innerText = `CrCl: ${crcl.toFixed(1)} mL/min\nRecommendation: ${doseAdjust}`;
+}
+
+// ==========================================
+// 10. Anion Gap Calculator (Emergency DKA)
+// ==========================================
+function calculateAnionGap() {
+    let na = parseFloat(document.getElementById('agNa').value);
+    let cl = parseFloat(document.getElementById('agCl').value);
+    let hco3 = parseFloat(document.getElementById('agHco3').value);
+    let result = document.getElementById('agResult');
+
+    if(!na || !cl || !hco3) return result.innerText = "Enter Na, Cl, and HCO3.";
+
+    let gap = na - (cl + hco3);
+    let status = "";
+
+    if(gap >= 8 && gap <= 12) status = "Normal Anion Gap.";
+    else if(gap > 12) status = "HIGH Anion Gap (HAGMA)! Possible DKA, Lactic Acidosis, or Toxicity.";
+    else status = "Low Anion Gap (Check albumin or lab error).";
+
+    result.innerText = `Anion Gap: ${gap.toFixed(1)} mEq/L\nInterpretation: ${status}`;
+}
+
+// ==========================================
+// 11. Non-Laboratory WHO CVD Risk
+// ==========================================
+function calculateNonLabCVD() {
+    let gender = document.getElementById('nlGender').value;
+    let age = parseFloat(document.getElementById('nlAge').value);
+    let sysBP = parseFloat(document.getElementById('nlSysBP').value);
+    let bmi = parseFloat(document.getElementById('nlBmi').value);
+    let smoker = parseInt(document.getElementById('nlSmoker').value);
+    let result = document.getElementById('nlResult');
+
+    if(!age || !sysBP || !bmi) return result.innerText = "Please fill all fields.";
+
+    let score = 0;
+    
+    if (age >= 50 && age < 60) score += 2;
+    else if (age >= 60 && age < 70) score += 4;
+    else if (age >= 70) score += 6;
+
+    if (gender === 'M') score += 2;
+    if (smoker === 1) score += 3;
+    if (sysBP >= 140 && sysBP < 160) score += 2;
+    else if (sysBP >= 160) score += 4;
+    
+    if (bmi >= 25 && bmi < 30) score += 1;
+    else if (bmi >= 30) score += 2;
+
+    let riskPercent = "";
+    if (score < 5) riskPercent = "< 10% (Low Risk 🟢)";
+    else if (score >= 5 && score <= 9) riskPercent = "10% to < 20% (Moderate Risk 🟡)";
+    else riskPercent = "≥ 20% (High Risk 🔴)";
+
+    result.innerText = `Estimated 10-Year Risk: ${riskPercent}\nAction: Implement lifestyle changes and clinical protocol.`;
+}
+
+// ==========================================
+// 12. UACR Stager (Microalbuminuria)
+// ==========================================
+function calculateUACR() {
+    let albumin = parseFloat(document.getElementById('uacrAlbumin').value);
+    let creatinine = parseFloat(document.getElementById('uacrCreatinine').value);
+    let result = document.getElementById('uacrResult');
+
+    if(!albumin || !creatinine) return result.innerText = "Enter Albumin and Creatinine.";
+
+    // Both inputs in mg/dL. Formula for mg/g is (Albumin / Creatinine) * 1000
+    let uacr = (albumin / creatinine) * 1000;
+    let stage = "";
+
+    if (uacr < 30) stage = "Normal (A1) 🟢\nNo significant kidney damage.";
+    else if (uacr >= 30 && uacr <= 300) stage = "Microalbuminuria (A2) 🟡\nEarly kidney damage. Consider ACEi/ARB.";
+    else stage = "Macroalbuminuria (A3) 🔴\nOvert nephropathy. Strict BP & sugar control needed.";
+
+    result.innerText = `UACR: ${uacr.toFixed(1)} mg/g\nStatus: ${stage}`;
+}
+
+// ==========================================
+// Sub-Tab Navigation for Calculators
+// ==========================================
+function openCalcTab(tabId, btnElement) {
+    // Hide all calculator contents
+    document.querySelectorAll('.calc-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.calc-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show the selected tab and make button active
+    document.getElementById(tabId).classList.add('active');
+    btnElement.classList.add('active');
+}
+
+        // ==========================================
+        // Hardware Back Button & Exit Logic
+        // ==========================================
+
+        // ১. অ্যাপ লোড হওয়ার সাথে সাথে ব্যাক বাটনের জন্য একটি 'Trap' তৈরি করা
+        window.history.pushState({ noBackExitsApp: true }, '');
+
+        // ২. মেইন নেভিগেশন (টুল ওপেন করা)
+        function openView(viewId) {
+            document.querySelectorAll('.view-section').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+            
+            if(viewId !== 'home-view') {
+                document.getElementById('searchContainer').style.display = 'none';
+            }
+        }
+
+        // ৩. হোম পেজে ফিরে যাওয়া (UI চেঞ্জ)
+        function goHome() {
+            document.querySelectorAll('.view-section').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById('home-view').classList.add('active');
+            document.getElementById('searchContainer').style.display = 'block';
+        }
+
+        // ৪. ফিজিক্যাল ব্যাক বাটন প্রেস ইভেন্ট লিসেনার
+        window.addEventListener('popstate', function(event) {
+            // চেক করা কোনো মোডাল (Settings, Dev, Exit) ওপেন আছে কি না
+            let activeModal = document.querySelector('.modal-overlay.active');
+            
+            if (activeModal) {
+                // মোডাল ওপেন থাকলে সেটা ক্লোজ করবে এবং অ্যাপ থেকে বের হতে দেবে না
+                activeModal.classList.remove('active');
+                window.history.pushState({ noBackExitsApp: true }, ''); 
+                return;
+            }
+
+            // বর্তমানে কোন ভিউ ওপেন আছে তা চেক করা
+            let currentView = document.querySelector('.view-section.active').id;
+            
+            if (currentView !== 'home-view') {
+                // টুলের ভেতর থাকলে ব্যাক বাটন চাপলে হোম পেজে আসবে
+                goHome();
+                window.history.pushState({ noBackExitsApp: true }, ''); 
+            } else {
+                // হোম পেজে থাকলে ব্যাক বাটন চাপলে Exit Modal দেখাবে
+                openModal('exitModal');
+                window.history.pushState({ noBackExitsApp: true }, ''); 
+            }
+        });
+
+        // ৫. অ্যাপ থেকে বের হওয়ার ফাইনাল লজিক
+        function confirmExit() {
+            // Android WebView বা PWA এর জন্য অ্যাপ ক্লোজ লজিক
+            if (navigator.app) {
+                navigator.app.exitApp();
+            } else if (navigator.device) {
+                navigator.device.exitApp();
+            } else {
+                // ব্রাউজারের জন্য
+                window.close();
+                // অনেক ব্রাউজার window.close() ব্লক করে, সেক্ষেত্রে ইউজারকে ম্যানুয়ালি ট্যাব কাটতে হতে পারে
+            }
+        }
+
+    </script>
+</body>
+</html>
